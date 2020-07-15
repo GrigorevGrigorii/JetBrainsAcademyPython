@@ -6,7 +6,6 @@ random.seed()
 class TicTacToe:
     def __init__(self, board="         "):
         self.board = list(board)
-        self.current = "X"
         self.state_of_game = "not finished"
 
     def __repr__(self):
@@ -36,6 +35,7 @@ class TicTacToe:
             self.state_of_game = "X wins"
             return True
         elif (self.board[0] == "O" and self.board[1] == "O" and self.board[2] == "O") or (
+                self.board[3] == "O" and self.board[4] == "O" and self.board[5] == "O") or (
                 self.board[6] == "O" and self.board[7] == "O" and self.board[8] == "O") or (
                 self.board[0] == "O" and self.board[3] == "O" and self.board[6] == "O") or (
                 self.board[1] == "O" and self.board[4] == "O" and self.board[7] == "O") or (
@@ -61,7 +61,6 @@ class TicTacToe:
                     if 1 <= x <= 3 and 1 <= y <= 3:
                         if self.board[x - 3 * y + 8] == " ":
                             self.board[x - 3 * y + 8] = whose_move
-                            self.current = "O" if self.current == "X" else "X"
                             print(self)
                             break
                         else:
@@ -79,7 +78,6 @@ class TicTacToe:
                 y_rand = random.randint(1, 3)
                 if self.board[x_rand - 3 * y_rand + 8] == " ":
                     self.board[x_rand - 3 * y_rand + 8] = whose_move
-                    self.current = "O" if self.current == "X" else "X"
                     print(self)
                     break
 
