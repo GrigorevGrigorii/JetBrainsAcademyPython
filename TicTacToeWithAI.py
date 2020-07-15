@@ -23,41 +23,56 @@ class TicTacToe:
         string += "---------"
         return string
 
-    def over(self):
-        if (self.board[0] == "X" and self.board[1] == "X" and self.board[2] == "X") or (
-                self.board[3] == "X" and self.board[4] == "X" and self.board[5] == "X") or (
-                self.board[6] == "X" and self.board[7] == "X" and self.board[8] == "X") or (
-                self.board[0] == "X" and self.board[3] == "X" and self.board[6] == "X") or (
-                self.board[1] == "X" and self.board[4] == "X" and self.board[7] == "X") or (
-                self.board[2] == "X" and self.board[5] == "X" and self.board[8] == "X") or (
-                self.board[0] == "X" and self.board[4] == "X" and self.board[8] == "X") or (
-                self.board[2] == "X" and self.board[4] == "X" and self.board[6] == "X"):
-            self.state_of_game = "X wins"
+    def over(self, board=None):
+        flag = False
+        if board is None:
+            board = self.board
+            flag = True
+        if (board[0] == "X" and board[1] == "X" and board[2] == "X") or (
+                board[3] == "X" and board[4] == "X" and board[5] == "X") or (
+                board[6] == "X" and board[7] == "X" and board[8] == "X") or (
+                board[0] == "X" and board[3] == "X" and board[6] == "X") or (
+                board[1] == "X" and board[4] == "X" and board[7] == "X") or (
+                board[2] == "X" and board[5] == "X" and board[8] == "X") or (
+                board[0] == "X" and board[4] == "X" and board[8] == "X") or (
+                board[2] == "X" and board[4] == "X" and board[6] == "X"):
+            if flag:
+                self.state_of_game = "X wins"
             return True
-        elif (self.board[0] == "O" and self.board[1] == "O" and self.board[2] == "O") or (
-                self.board[3] == "O" and self.board[4] == "O" and self.board[5] == "O") or (
-                self.board[6] == "O" and self.board[7] == "O" and self.board[8] == "O") or (
-                self.board[0] == "O" and self.board[3] == "O" and self.board[6] == "O") or (
-                self.board[1] == "O" and self.board[4] == "O" and self.board[7] == "O") or (
-                self.board[2] == "O" and self.board[5] == "O" and self.board[8] == "O") or (
-                self.board[0] == "O" and self.board[4] == "O" and self.board[8] == "O") or (
-                self.board[2] == "O" and self.board[4] == "O" and self.board[6] == "O"):
-            self.state_of_game = "O wins"
+        elif (board[0] == "O" and board[1] == "O" and board[2] == "O") or (
+                board[3] == "O" and board[4] == "O" and board[5] == "O") or (
+                board[6] == "O" and board[7] == "O" and board[8] == "O") or (
+                board[0] == "O" and board[3] == "O" and board[6] == "O") or (
+                board[1] == "O" and board[4] == "O" and board[7] == "O") or (
+                board[2] == "O" and board[5] == "O" and board[8] == "O") or (
+                board[0] == "O" and board[4] == "O" and board[8] == "O") or (
+                board[2] == "O" and board[4] == "O" and board[6] == "O"):
+            if flag:
+                self.state_of_game = "O wins"
             return True
-        elif self.board.count(" ") == 0:
-            self.state_of_game = "Draw"
+        elif board.count(" ") == 0:
+            if flag:
+                self.state_of_game = "Draw"
             return True
         else:
             return False
 
+    def make_random_move(self, whose_move):
+        while True:
+            rand_cell = random.randint(0, 8)
+            if self.board[rand_cell] == " ":
+                self.board[rand_cell] = whose_move
+                print(self)
+                break
+
     def make_a_move_user(self, whose_move):
         if not self.over():
             while True:
-                x_y = input("Enter the coordinates: > ")
+                x_y = input("Enter the coordinates: > ").strip()
                 if x_y == "exit":
                     exit(0)
                 if all([n.isdigit() for n in x_y.split()]) and len(x_y.split()) == 2:
-                    x, y = int(x_y.split()[0]), int(x_y.split()[1])
+                    x, y = map(int, x_y.split())
                     if 1 <= x <= 3 and 1 <= y <= 3:
                         if self.board[x - 3 * y + 8] == " ":
                             self.board[x - 3 * y + 8] = whose_move
@@ -73,43 +88,26 @@ class TicTacToe:
     def make_a_move_easy(self, whose_move):
         if not self.over():
             print("Making move level \"easy\"")
-            while True:
-                x_rand = random.randint(1, 3)
-                y_rand = random.randint(1, 3)
-                if self.board[x_rand - 3 * y_rand + 8] == " ":
-                    self.board[x_rand - 3 * y_rand + 8] = whose_move
-                    print(self)
-                    break
+            self.make_random_move(whose_move)
 
     def make_a_move_medium(self, whose_move):
         if not self.over():
             print("Making move level \"medium\"")
+            opponent = "O" if whose_move == "X" else "X"
+            cell = -1
             for i in range(9):
                 if self.board[i] == " ":
-                    temp_game = TicTacToe(''.join([self.board[j] if j != i else whose_move for j in range(9)]))
-                    if temp_game.over():
+                    if self.over([self.board[j] if j != i else whose_move for j in range(9)]):
                         self.board[i] = whose_move
                         print(self)
-                        del temp_game
                         return
-                    del temp_game
-            for i in range(9):
-                if self.board[i] == " ":
-                    opponent = "O" if whose_move == "X" else "X"
-                    temp_game = TicTacToe(''.join([self.board[j] if j != i else opponent for j in range(9)]))
-                    if temp_game.over():
-                        self.board[i] = whose_move
-                        print(self)
-                        del temp_game
-                        return
-                    del temp_game
-            while True:
-                x_rand = random.randint(1, 3)
-                y_rand = random.randint(1, 3)
-                if self.board[x_rand - 3 * y_rand + 8] == " ":
-                    self.board[x_rand - 3 * y_rand + 8] = whose_move
-                    print(self)
-                    break
+                    if self.over([self.board[j] if j != i else opponent for j in range(9)]) and cell == -1:
+                        cell = i
+            if cell == -1:
+                self.board[cell] = whose_move
+                print(self)
+            else:
+                self.make_random_move(whose_move)
 
     @staticmethod
     def processing_command(command):
@@ -196,4 +194,4 @@ class TicTacToe:
 
 
 while True:
-    TicTacToe.processing_command(input('Input command: > '))
+    TicTacToe.processing_command(input('Input command: > ').strip())
