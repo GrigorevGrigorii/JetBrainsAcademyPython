@@ -94,16 +94,16 @@ class TicTacToe:
         if not self.over():
             print("Making move level \"medium\"")
             opponent = "O" if whose_move == "X" else "X"
-            cell = -1
+            cell = None
             for i in range(9):
                 if self.board[i] == " ":
                     if self.over([self.board[j] if j != i else whose_move for j in range(9)]):
                         self.board[i] = whose_move
                         print(self)
                         return
-                    if self.over([self.board[j] if j != i else opponent for j in range(9)]) and cell == -1:
+                    if self.over([self.board[j] if j != i else opponent for j in range(9)]) and cell is None:
                         cell = i
-            if cell == -1:
+            if cell is not None:
                 self.board[cell] = whose_move
                 print(self)
             else:
