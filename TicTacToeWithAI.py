@@ -27,25 +27,12 @@ class TicTacToe:
     def over(self, board=None):
         if board is None:
             board = self.board
-        if (board[0] == "X" and board[1] == "X" and board[2] == "X") or (
-                board[3] == "X" and board[4] == "X" and board[5] == "X") or (
-                board[6] == "X" and board[7] == "X" and board[8] == "X") or (
-                board[0] == "X" and board[3] == "X" and board[6] == "X") or (
-                board[1] == "X" and board[4] == "X" and board[7] == "X") or (
-                board[2] == "X" and board[5] == "X" and board[8] == "X") or (
-                board[0] == "X" and board[4] == "X" and board[8] == "X") or (
-                board[2] == "X" and board[4] == "X" and board[6] == "X"):
+        list_of_all_combination = [board[0:3], board[3:6], board[6:9], board[0:7:3], board[1:8:3], board[2:9:3], board[0:9:4], board[2:7:2]]
+        if any([combination == ['X', 'X', 'X'] for combination in list_of_all_combination]):
             if board == self.board:
                 self.state_of_game = "X wins"
             return True
-        elif (board[0] == "O" and board[1] == "O" and board[2] == "O") or (
-                board[3] == "O" and board[4] == "O" and board[5] == "O") or (
-                board[6] == "O" and board[7] == "O" and board[8] == "O") or (
-                board[0] == "O" and board[3] == "O" and board[6] == "O") or (
-                board[1] == "O" and board[4] == "O" and board[7] == "O") or (
-                board[2] == "O" and board[5] == "O" and board[8] == "O") or (
-                board[0] == "O" and board[4] == "O" and board[8] == "O") or (
-                board[2] == "O" and board[4] == "O" and board[6] == "O"):
+        elif any([combination == ['O', 'O', 'O'] for combination in list_of_all_combination]):
             if board == self.board:
                 self.state_of_game = "O wins"
             return True
@@ -115,69 +102,60 @@ class TicTacToe:
             exit(0)
         elif len(command.split()) == 3:
             if command.split()[0] == 'start':
-                if command.split()[1] == 'user':
-                    if command.split()[2] == 'user':
-                        game = TicTacToe()
-                        while not game.over():
-                            game.make_a_move_user("X")
-                            game.make_a_move_user("O")
-                        print(game.state_of_game)
-                    elif command.split()[2] == 'easy':
-                        game = TicTacToe()
-                        while not game.over():
-                            game.make_a_move_user("X")
-                            game.make_a_move_easy("O")
-                        print(game.state_of_game)
-                    elif command.split()[2] == 'medium':
-                        game = TicTacToe()
-                        while not game.over():
-                            game.make_a_move_user("X")
-                            game.make_a_move_medium("O")
-                        print(game.state_of_game)
-                    else:
-                        print('Bad parameters!')
-                elif command.split()[1] == 'easy':
-                    if command.split()[2] == 'user':
-                        game = TicTacToe()
-                        while not game.over():
-                            game.make_a_move_easy("X")
-                            game.make_a_move_user("O")
-                        print(game.state_of_game)
-                    elif command.split()[2] == 'easy':
-                        game = TicTacToe()
-                        while not game.over():
-                            game.make_a_move_easy("X")
-                            game.make_a_move_easy("O")
-                        print(game.state_of_game)
-                    elif command.split()[2] == 'medium':
-                        game = TicTacToe()
-                        while not game.over():
-                            game.make_a_move_easy("X")
-                            game.make_a_move_medium("O")
-                        print(game.state_of_game)
-                    else:
-                        print('Bad parameters!')
-                elif command.split()[1] == 'medium':
-                    if command.split()[2] == 'user':
-                        game = TicTacToe()
-                        while not game.over():
-                            game.make_a_move_medium("X")
-                            game.make_a_move_user("O")
-                        print(game.state_of_game)
-                    elif command.split()[2] == 'easy':
-                        game = TicTacToe()
-                        while not game.over():
-                            game.make_a_move_medium("X")
-                            game.make_a_move_easy("O")
-                        print(game.state_of_game)
-                    elif command.split()[2] == 'medium':
-                        game = TicTacToe()
-                        while not game.over():
-                            game.make_a_move_medium("X")
-                            game.make_a_move_medium("O")
-                        print(game.state_of_game)
-                    else:
-                        print('Bad parameters!')
+                if command.split()[1] == 'user' and command.split()[2] == 'user':
+                    game = TicTacToe()
+                    while not game.over():
+                        game.make_a_move_user("X")
+                        game.make_a_move_user("O")
+                    print(game.state_of_game)
+                elif command.split()[1] == 'user' and command.split()[2] == 'easy':
+                    game = TicTacToe()
+                    while not game.over():
+                        game.make_a_move_user("X")
+                        game.make_a_move_easy("O")
+                    print(game.state_of_game)
+                elif command.split()[1] == 'user' and command.split()[2] == 'medium':
+                    game = TicTacToe()
+                    while not game.over():
+                        game.make_a_move_user("X")
+                        game.make_a_move_medium("O")
+                    print(game.state_of_game)
+                elif command.split()[1] == 'easy' and command.split()[2] == 'user':
+                    game = TicTacToe()
+                    while not game.over():
+                        game.make_a_move_easy("X")
+                        game.make_a_move_user("O")
+                    print(game.state_of_game)
+                elif command.split()[1] == 'easy' and command.split()[2] == 'easy':
+                    game = TicTacToe()
+                    while not game.over():
+                        game.make_a_move_easy("X")
+                        game.make_a_move_easy("O")
+                    print(game.state_of_game)
+                elif command.split()[1] == 'easy' and command.split()[2] == 'medium':
+                    game = TicTacToe()
+                    while not game.over():
+                        game.make_a_move_easy("X")
+                        game.make_a_move_medium("O")
+                    print(game.state_of_game)
+                elif command.split()[1] == 'medium' and command.split()[2] == 'user':
+                    game = TicTacToe()
+                    while not game.over():
+                        game.make_a_move_medium("X")
+                        game.make_a_move_user("O")
+                    print(game.state_of_game)
+                elif command.split()[1] == 'medium' and command.split()[2] == 'easy':
+                    game = TicTacToe()
+                    while not game.over():
+                        game.make_a_move_medium("X")
+                        game.make_a_move_easy("O")
+                    print(game.state_of_game)
+                elif command.split()[1] == 'medium' and command.split()[2] == 'medium':
+                    game = TicTacToe()
+                    while not game.over():
+                        game.make_a_move_medium("X")
+                        game.make_a_move_medium("O")
+                    print(game.state_of_game)
                 else:
                     print('Bad parameters!')
         else:
