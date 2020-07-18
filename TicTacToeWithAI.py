@@ -97,9 +97,11 @@ class TicTacToe:
             else:
                 self.make_a_random_move(player)
 
-    def minimax(self, new_board, player, maximizer_mark):
+    def minimax(self, new_board, player, maximizer_mark, depth):
         state = self.over(new_board)
-        if state == "Draw":
+        if depth == 0:
+            return 0
+        elif state == "Draw":
             return 0
         elif state:
             return 1 if state.split()[0] is maximizer_mark else -1
@@ -108,13 +110,14 @@ class TicTacToe:
         for move in [i for i in range(9) if self.board[i] == ' ']:
             board_with_a_new_move = [self.board[i] if i != move else player for i in range(9)]
             opponent = 'O' if player == 'X' else 'X'
-            scores.append(self.minimax(board_with_a_new_move, opponent, maximizer_mark))
+            scores.append(self.minimax(board_with_a_new_move, opponent, maximizer_mark, depth - 1))
         return max(scores) if player is maximizer_mark else min(scores)
 
     def make_a_move_hard(self, player):
         if not self.over():
             print("Making move level \"hard\"")
-            if self.board.count(' ') == 9 or 8:
+            depth = self.board.count(' ')
+            if depth == 9 or depth == 8:
                 self.make_a_random_move(player)
             else:
                 best_score = -2
@@ -122,7 +125,7 @@ class TicTacToe:
                 for move in [i for i in range(9) if self.board[i] == ' ']:
                     opponent = 'O' if player == 'X' else 'X'
                     board_with_a_new_move = [self.board[i] if i != move else player for i in range(9)]
-                    score = self.minimax(board_with_a_new_move, opponent, player)
+                    score = self.minimax(board_with_a_new_move, opponent, player, depth - 1)
                     if score > best_score:
                         best_score = score
                         best_move = move
