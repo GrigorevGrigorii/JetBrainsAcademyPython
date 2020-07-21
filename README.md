@@ -1,1 +1,1 @@
-# JetBrains Academy Python Developer
+# JetBrains Academy / Python Developer
