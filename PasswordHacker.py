@@ -22,36 +22,28 @@ def brute_force():
         password_length += 1
 
 
-def gen_of_passwords(password):
-    for n in range(2 ** len(password)):
-        bin_n = list(bin(n))
-        bin_n.pop(0)
-        bin_n.pop(0)
-        extra_zero = ['0'] * (len(password) - len(bin_n))
-        bin_n = extra_zero + bin_n
-
-        possible_password = ""
-        for i in range(len(password)):
-            if bin_n[i] == '0' or password[i].isdigit():
-                possible_password += password[i]
-            else:
-                possible_password += chr(ord(password[i]) - 32)
-
-        yield possible_password
+def gen_of_passwords():
+    with open('passwords.txt', 'r', encoding='utf-8') as passwords:
+        for password in passwords:
+            password = password.strip('\n')
+            lower = password.lower()
+            upper = password.upper()
+            zipped = zip(lower, upper)
+            all_combinations = map(''.join, itertools.product(*zipped))
+            for combination in all_combinations:
+                yield combination
 
 
 def brute_force_with_dict():
-    with open('passwords.txt', 'r', encoding='utf-8') as passwords:
-        for password in passwords:
-            gen = gen_of_passwords(password.rstrip('\n'))
-            for possible_password in gen:
-                my_socket.send(possible_password.encode())
-                response = my_socket.recv(1024).decode()
+    all_combinations = gen_of_passwords()
+    for possible_password in all_combinations:
+        my_socket.send(possible_password.encode())
+        response = my_socket.recv(1024).decode()
 
-                if response == 'Connection success!':
-                    return possible_password
-                elif response == 'Too many attempts':
-                    return None
+        if response == 'Connection success!':
+            return possible_password
+        elif response == 'Too many attempts':
+            return None
 
 
 args = sys.argv
