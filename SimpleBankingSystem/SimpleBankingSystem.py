@@ -9,13 +9,8 @@ cur.execute("CREATE TABLE IF NOT EXISTS card (id INTEGER, number TEXT, pin TEXT,
 
 class Bank:
     def __init__(self):
-        self.all_accounts = {}
-        cur.execute("SELECT number, pin, balance FROM card")
-        for item in cur.fetchall():
-            self.all_accounts[item[0]] = {"PIN": item[1], "balance": item[2]}
-
         self.current_mode = "start_mode"
-        self.current_account = None
+        self.id_of_current_card = 0
 
     def get_menu(self):
         if self.current_mode == "start_mode":
@@ -34,13 +29,13 @@ class Bank:
             del digits
 
             card_number += last_digit
-            if card_number not in self.all_accounts.keys():
+            cur.execute("SELECT * FROM card WHERE number = ?", (card_number,))
+            if not cur.fetchall() == 0:
                 break
 
         card_pin = ''.join([str(randint(0, 9)) for _ in range(4)])
-        card_id = str(len(self.all_accounts.keys()) + 1)
-
-        self.all_accounts[card_number] = {"PIN": card_pin, "balance": 0}
+        cur.execute("SELECT * FROM card")
+        card_id = str(len(cur.fetchall()) + 1)
 
         cur.execute("INSERT INTO card (id, number, pin) VALUES (?, ?, ?)", (card_id, card_number, card_pin))
 
@@ -52,17 +47,24 @@ class Bank:
         card_number = input("Enter your card number:\n>")
         card_pin = input("Enter your PIN:\n>")
 
-        if card_number not in self.all_accounts.keys() or self.all_accounts[card_number]["PIN"] != card_pin:
+        cur.execute("SELECT * FROM card WHERE number = ? AND pin = ?", (card_number, card_pin))
+        data = cur.fetchall()
+
+        if not data:
             print("Wrong card number or PIN!\n")
             return
         print("You have successfully logged in!\n")
         self.current_mode = "account_mode"
-        self.current_account = card_number
+        self.id_of_current_card = data[0]
         return
+
+    def balance(self):
+        cur.execute("SELECT * FROM card WHERE id = ?", (self.id_of_current_card,))
+        print(f"Balance: {cur.fetchall()[3]}")
 
     def log_out(self):
         self.current_mode = "start_mode"
-        self.current_account = None
+        self.id_of_current_card = 0
 
     def processing_command(self, command):
         print()
@@ -79,7 +81,7 @@ class Bank:
                 print("Command error")
         elif self.current_mode == "account_mode":
             if command == '1':
-                print(f"Balance: {self.all_accounts[self.current_account]['balance']}\n")
+                self.balance()
             elif command == '2':
                 self.log_out()
             elif command == '0':
