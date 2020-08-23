@@ -23,11 +23,6 @@ class NewsPage(View):
         print("q: ", q)
         data_with_q = list(filter(lambda news: q in news['title'], data))
         return render(request, "news/news_page.html", context={'data': data_with_q})
-    
-    def post(self, request, *args, **kwargs):
-        q = request.POST.get('q')
-        data_with_q = list(filter(lambda news: q in news['title'], data))
-        return render(request, "news/news_page.html", context={'data': data_with_q})
 
 
 class CreatePage(View):
